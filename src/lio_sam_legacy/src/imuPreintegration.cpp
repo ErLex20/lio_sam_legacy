@@ -62,7 +62,7 @@ public:
         laserOdomOpt.callback_group = callbackGroupLaserOdometry;
 
         subLaserOdometry = create_subscription<nav_msgs::msg::Odometry>(
-            "lio_sam_old/mapping/odometry", qos,
+            "lio_sam_legacy/mapping/odometry", qos,
             std::bind(&TransformFusion::lidarOdometryHandler, this, std::placeholders::_1),
             laserOdomOpt);
         subImuOdometry = create_subscription<nav_msgs::msg::Odometry>(
@@ -71,7 +71,7 @@ public:
             imuOdomOpt);
 
         pubImuOdometry = create_publisher<nav_msgs::msg::Odometry>(odomTopic, qos_imu);
-        pubImuPath = create_publisher<nav_msgs::msg::Path>("lio_sam_old/imu/path", qos);
+        pubImuPath = create_publisher<nav_msgs::msg::Path>("lio_sam_legacy/imu/path", qos);
 
         tfBroadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(this);
     }
@@ -239,7 +239,7 @@ public:
             std::bind(&IMUPreintegration::imuHandler, this, std::placeholders::_1),
             imuOpt);
         subOdometry = create_subscription<nav_msgs::msg::Odometry>(
-            "lio_sam_old/mapping/odometry_incremental", qos,
+            "lio_sam_legacy/mapping/odometry_incremental", qos,
             std::bind(&IMUPreintegration::odometryHandler, this, std::placeholders::_1),
             odomOpt);
 

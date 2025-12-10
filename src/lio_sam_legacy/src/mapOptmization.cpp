@@ -1,6 +1,6 @@
 #include "utility.hpp"
-#include "lio_sam_old/msg/cloud_info.hpp"
-#include "lio_sam_old/srv/save_map.hpp"
+#include "lio_sam_legacy/msg/cloud_info.hpp"
+#include "lio_sam_legacy/srv/save_map.hpp"
 #include <gtsam/geometry/Rot3.h>
 #include <gtsam/geometry/Pose3.h>
 #include <gtsam/slam/PriorFactor.h>
@@ -72,13 +72,13 @@ public:
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pubCloudRegisteredRaw;
     rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr pubLoopConstraintEdge;
 
-    rclcpp::Service<lio_sam_old::srv::SaveMap>::SharedPtr srvSaveMap;
-    rclcpp::Subscription<lio_sam_old::msg::CloudInfo>::SharedPtr subCloud;
+    rclcpp::Service<lio_sam_legacy::srv::SaveMap>::SharedPtr srvSaveMap;
+    rclcpp::Subscription<lio_sam_legacy::msg::CloudInfo>::SharedPtr subCloud;
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr subGPS;
     rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr subLoop;
 
     std::deque<nav_msgs::msg::Odometry> gpsQueue;
-    lio_sam_old::msg::CloudInfo cloudInfo;
+    lio_sam_legacy::msg::CloudInfo cloudInfo;
 
     vector<pcl::PointCloud<PointType>::Ptr> cornerCloudKeyFrames;
     vector<pcl::PointCloud<PointType>::Ptr> surfCloudKeyFrames;
@@ -158,16 +158,16 @@ public:
         parameters.relinearizeSkip = 1;
         isam = new ISAM2(parameters);
 
-        pubKeyPoses = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_old/mapping/trajectory", 1);
-        pubLaserCloudSurround = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_old/mapping/map_global", 1);
-        pubLaserOdometryGlobal = create_publisher<nav_msgs::msg::Odometry>("lio_sam_old/mapping/odometry", qos);
+        pubKeyPoses = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_legacy/mapping/trajectory", 1);
+        pubLaserCloudSurround = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_legacy/mapping/map_global", 1);
+        pubLaserOdometryGlobal = create_publisher<nav_msgs::msg::Odometry>("lio_sam_legacy/mapping/odometry", qos);
         pubLaserOdometryIncremental = create_publisher<nav_msgs::msg::Odometry>(
-            "lio_sam_old/mapping/odometry_incremental", qos);
-        pubPath = create_publisher<nav_msgs::msg::Path>("lio_sam_old/mapping/path", 1);
+            "lio_sam_legacy/mapping/odometry_incremental", qos);
+        pubPath = create_publisher<nav_msgs::msg::Path>("lio_sam_legacy/mapping/path", 1);
         br = std::make_unique<tf2_ros::TransformBroadcaster>(this);
 
-        subCloud = create_subscription<lio_sam_old::msg::CloudInfo>(
-            "lio_sam_old/feature/cloud_info", qos,
+        subCloud = create_subscription<lio_sam_legacy::msg::CloudInfo>(
+            "lio_sam_legacy/feature/cloud_info", qos,
             std::bind(&mapOptimization::laserCloudInfoHandler, this, std::placeholders::_1));
         subGPS = create_subscription<nav_msgs::msg::Odometry>(
             gpsTopic, 200,
@@ -176,7 +176,7 @@ public:
             "lio_loop/loop_closure_detection", qos,
             std::bind(&mapOptimization::loopInfoHandler, this, std::placeholders::_1));
 
-        auto saveMapService = [this](const std::shared_ptr<rmw_request_id_t> request_header, const std::shared_ptr<lio_sam_old::srv::SaveMap::Request> req, std::shared_ptr<lio_sam_old::srv::SaveMap::Response> res) -> void {
+        auto saveMapService = [this](const std::shared_ptr<rmw_request_id_t> request_header, const std::shared_ptr<lio_sam_legacy::srv::SaveMap::Request> req, std::shared_ptr<lio_sam_legacy::srv::SaveMap::Response> res) -> void {
             (void)request_header;
             string saveMapDirectory;
             cout << "****************************************************" << endl;
@@ -235,14 +235,14 @@ public:
             return;
         };
         
-        srvSaveMap = create_service<lio_sam_old::srv::SaveMap>("lio_sam_old/save_map", saveMapService);
-        pubHistoryKeyFrames = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_old/mapping/icp_loop_closure_history_cloud", 1);
-        pubIcpKeyFrames = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_old/mapping/icp_loop_closure_history_cloud", 1);
-        pubLoopConstraintEdge = create_publisher<visualization_msgs::msg::MarkerArray>("/lio_sam_old/mapping/loop_closure_constraints", 1);
+        srvSaveMap = create_service<lio_sam_legacy::srv::SaveMap>("lio_sam_legacy/save_map", saveMapService);
+        pubHistoryKeyFrames = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_legacy/mapping/icp_loop_closure_history_cloud", 1);
+        pubIcpKeyFrames = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_legacy/mapping/icp_loop_closure_history_cloud", 1);
+        pubLoopConstraintEdge = create_publisher<visualization_msgs::msg::MarkerArray>("/lio_sam_legacy/mapping/loop_closure_constraints", 1);
 
-        pubRecentKeyFrames = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_old/mapping/map_local", 1);
-        pubRecentKeyFrame = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_old/mapping/cloud_registered", 1);
-        pubCloudRegisteredRaw = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_old/mapping/cloud_registered_raw", 1);
+        pubRecentKeyFrames = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_legacy/mapping/map_local", 1);
+        pubRecentKeyFrame = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_legacy/mapping/cloud_registered", 1);
+        pubCloudRegisteredRaw = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam_legacy/mapping/cloud_registered_raw", 1);
 
         downSizeFilterCorner.setLeafSize(mappingCornerLeafSize, mappingCornerLeafSize, mappingCornerLeafSize);
         downSizeFilterSurf.setLeafSize(mappingSurfLeafSize, mappingSurfLeafSize, mappingSurfLeafSize);
@@ -295,7 +295,7 @@ public:
         matP.setZero();
     }
 
-    void laserCloudInfoHandler(const lio_sam_old::msg::CloudInfo::SharedPtr msgIn)
+    void laserCloudInfoHandler(const lio_sam_legacy::msg::CloudInfo::SharedPtr msgIn)
     {
         // extract time stamp
         timeLaserInfoStamp = msgIn->header.stamp;

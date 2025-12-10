@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(lio_sam_old)
+project(lio_sam_legacy)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Release)
@@ -32,7 +32,7 @@ find_package(Eigen3 3.4 REQUIRED)
 find_package(OpenMP REQUIRED)
 
 include_directories(
-  include/lio_sam_old
+  include/lio_sam_legacy
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME} "msg/CloudInfo.msg" "srv/SaveMap.srv" DEPENDENCIES std_msgs sensor_msgs)

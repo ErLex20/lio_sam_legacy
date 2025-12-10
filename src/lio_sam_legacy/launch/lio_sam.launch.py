@@ -8,7 +8,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
-    share_dir = get_package_share_directory('lio_sam_old')
+    share_dir = get_package_share_directory('lio_sam_legacy')
     parameter_file = LaunchConfiguration('params_file')
     xacro_path = os.path.join(share_dir, 'config', 'robot.urdf.xacro')
     rviz_config_file = os.path.join(share_dir, 'config', 'rviz2.rviz')
@@ -33,30 +33,30 @@ def generate_launch_description():
             }]
         ),
         # Node(
-        #     package='lio_sam_old',
+        #     package='lio_sam_legacy',
         #     executable='lio_sam_imuPreintegration',
         #     name='lio_sam_imuPreintegration',
         #     parameters=[parameter_file],
         #     output='screen'
         # ),
         Node(
-            package='lio_sam_old',
-            executable='lio_sam_old_imageProjection',
-            name='lio_sam_old_imageProjection',
+            package='lio_sam_legacy',
+            executable='lio_sam_legacy_imageProjection',
+            name='lio_sam_legacy_imageProjection',
             parameters=[parameter_file],
             output='screen'
         ),
         Node(
-            package='lio_sam_old',
-            executable='lio_sam_old_featureExtraction',
-            name='lio_sam_old_featureExtraction',
+            package='lio_sam_legacy',
+            executable='lio_sam_legacy_featureExtraction',
+            name='lio_sam_legacy_featureExtraction',
             parameters=[parameter_file],
             output='screen'
         ),
         Node(
-            package='lio_sam_old',
-            executable='lio_sam_old_mapOptimization',
-            name='lio_sam_old_mapOptimization',
+            package='lio_sam_legacy',
+            executable='lio_sam_legacy_mapOptimization',
+            name='lio_sam_legacy_mapOptimization',
             parameters=[parameter_file],
             output='screen'
         ),

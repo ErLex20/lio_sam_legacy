@@ -1,5 +1,5 @@
 #include "utility.hpp"
-#include "lio_sam_old/msg/cloud_info.hpp"
+#include "lio_sam_legacy/msg/cloud_info.hpp"
 
 struct smoothness_t{ 
     float value;
@@ -17,9 +17,9 @@ class FeatureExtraction : public ParamServer
 
 public:
 
-    rclcpp::Subscription<lio_sam_old::msg::CloudInfo>::SharedPtr subLaserCloudInfo;
+    rclcpp::Subscription<lio_sam_legacy::msg::CloudInfo>::SharedPtr subLaserCloudInfo;
 
-    rclcpp::Publisher<lio_sam_old::msg::CloudInfo>::SharedPtr pubLaserCloudInfo;
+    rclcpp::Publisher<lio_sam_legacy::msg::CloudInfo>::SharedPtr pubLaserCloudInfo;
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pubCornerPoints;
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pubSurfacePoints;
 
@@ -29,7 +29,7 @@ public:
 
     pcl::VoxelGrid<PointType> downSizeFilter;
 
-    lio_sam_old::msg::CloudInfo cloudInfo;
+    lio_sam_legacy::msg::CloudInfo cloudInfo;
     std_msgs::msg::Header cloudHeader;
 
     std::vector<smoothness_t> cloudSmoothness;
@@ -40,16 +40,16 @@ public:
     FeatureExtraction(const rclcpp::NodeOptions & options) :
         ParamServer("lio_sam_featureExtraction", options)
     {
-        subLaserCloudInfo = create_subscription<lio_sam_old::msg::CloudInfo>(
-            "lio_sam_old/deskew/cloud_info", qos,
+        subLaserCloudInfo = create_subscription<lio_sam_legacy::msg::CloudInfo>(
+            "lio_sam_legacy/deskew/cloud_info", qos,
             std::bind(&FeatureExtraction::laserCloudInfoHandler, this, std::placeholders::_1));
 
-        pubLaserCloudInfo = create_publisher<lio_sam_old::msg::CloudInfo>(
-            "lio_sam_old/feature/cloud_info", qos);
+        pubLaserCloudInfo = create_publisher<lio_sam_legacy::msg::CloudInfo>(
+            "lio_sam_legacy/feature/cloud_info", qos);
         pubCornerPoints = create_publisher<sensor_msgs::msg::PointCloud2>(
-            "lio_sam_old/feature/cloud_corner", 1);
+            "lio_sam_legacy/feature/cloud_corner", 1);
         pubSurfacePoints = create_publisher<sensor_msgs::msg::PointCloud2>(
-            "lio_sam_old/feature/cloud_surface", 1);
+            "lio_sam_legacy/feature/cloud_surface", 1);
 
         initializationValue();
     }
@@ -69,7 +69,7 @@ public:
         cloudLabel = new int[N_SCAN*Horizon_SCAN];
     }
 
-    void laserCloudInfoHandler(const lio_sam_old::msg::CloudInfo::SharedPtr msgIn)
+    void laserCloudInfoHandler(const lio_sam_legacy::msg::CloudInfo::SharedPtr msgIn)
     {
         cloudInfo = *msgIn; // new cloud info
         cloudHeader = msgIn->header; // new cloud header

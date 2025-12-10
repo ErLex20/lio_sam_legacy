@@ -156,9 +156,9 @@ public:
         get_parameter("pointCloudTopic", pointCloudTopic);
         declare_parameter("imuTopic", "imu/data");
         get_parameter("imuTopic", imuTopic);
-        declare_parameter("odomTopic", "lio_sam_old/odometry/imu");
+        declare_parameter("odomTopic", "lio_sam_legacy/odometry/imu");
         get_parameter("odomTopic", odomTopic);
-        declare_parameter("gpsTopic", "lio_sam_old/odometry/gps");
+        declare_parameter("gpsTopic", "lio_sam_legacy/odometry/gps");
         get_parameter("gpsTopic", gpsTopic);
 
         declare_parameter("lidarFrame", "laser_data_frame");
