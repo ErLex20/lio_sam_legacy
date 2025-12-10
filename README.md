@@ -1,8 +1,6 @@
-# dua-template
+# lio_sam
 
-GitHub template repositories for projects based on the Distributed Unified Architecture.
-
-See [`dua-template.md`](dua-template.md) for more information.
+ROS2 node for LIO-SAM: Tightly-coupled Lidar Inertial Odometry via Smoothing and Mapping.
 
 ---
 
